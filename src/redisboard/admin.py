@@ -35,7 +35,8 @@ class RedisServerAdmin(admin.ModelAdmin):
     list_filter = 'label', 'hostname'
     ordering = ('hostname', 'port')
 
-    def slowlog(self, obj):
+    @staticmethod
+    def slowlog(obj):
         output = [(float('inf'), 'Total: %d items' % obj.stats['slowlog_len'])]
         for log in obj.stats['slowlog']:
             command = log['command']
@@ -54,19 +55,23 @@ class RedisServerAdmin(admin.ModelAdmin):
     slowlog.allow_tags = True
     slowlog.long_description = _('Slowlog')
 
-    def status(self, obj):
+    @staticmethod
+    def status(obj):
         return obj.stats['status']
     status.long_description = _("Status")
 
-    def memory(self, obj):
+    @staticmethod
+    def memory(obj):
         return obj.stats['memory']
     memory.long_description = _("Memory")
 
-    def clients(self, obj):
+    @staticmethod
+    def clients(obj):
         return obj.stats['clients']
     clients.long_description = _("Clients")
 
-    def tools(self, obj):
+    @staticmethod
+    def tools(obj):
         return '<a href="%s">%s</a>' % (
             reverse("admin:redisboard_redisserver_inspect", args=(obj.id,)),
             unicode(_("Inspect"))
@@ -74,7 +79,8 @@ class RedisServerAdmin(admin.ModelAdmin):
     tools.allow_tags = True
     tools.long_description = _("Tools")
 
-    def details(self, obj):
+    @staticmethod
+    def details(obj):
         output = []
         brief_details = obj.stats['brief_details']
         for k, v in (brief_details.items() if PY3 else brief_details.iteritems()):
@@ -85,7 +91,8 @@ class RedisServerAdmin(admin.ModelAdmin):
     details.allow_tags = True
     details.long_description = _("Details")
 
-    def cpu_utilization(self, obj):
+    @staticmethod
+    def cpu_utilization(obj):
         stats = obj.stats
         if stats['status'] != 'UP':
             return 'n/a'

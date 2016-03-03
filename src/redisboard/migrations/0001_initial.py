@@ -31,6 +31,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='redisserver',
-            unique_together=set([('hostname', 'port')]),
+            unique_together={('hostname', 'port')},
         ),
     ]

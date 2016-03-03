@@ -86,7 +86,8 @@ class RedisServer(models.Model):
     sampling_size = models.IntegerField(
         _("Sampling size"),
         default=200,
-        help_text=_("Number of random keys shown when sampling is used. Note that each key translates to a RANDOMKEY call in redis.")
+        help_text=_(
+            "Number of random keys shown when sampling is used. Note that each key translates to a RANDOMKEY call in redis.")
     )
 
     def clean(self):
@@ -168,7 +169,7 @@ class RedisServer(models.Model):
             label = '%s'
 
         if self.port:
-            label = label % ('%s:%s' % (self.hostname, self.port))
+            label %= '%s:%s' % (self.hostname, self.port)
         else:
             label = label % self.hostname
 
@@ -180,7 +181,7 @@ class RedisServer(models.Model):
         except redis.exceptions.ConnectionError:
             return 0
 
-    def slowlog_get(self, limit=REDISBOARD_SLOWLOG_LEN):
+    def slowlog_get(self):
         try:
             for slowlog in self.connection.slowlog_get(REDISBOARD_SLOWLOG_LEN):
                 yield dict(

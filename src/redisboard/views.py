@@ -2,13 +2,14 @@ from logging import getLogger
 
 from django.conf import settings
 from django.core.paginator import Paginator
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseNotFound, HttpResponse
 from django.shortcuts import render
+
 try:
     from django.utils.datastructures import SortedDict as OrderedDict
 except ImportError:
     from django.utils.datastructures import OrderedDict
-    
+
 from django.utils.functional import curry
 from redis.exceptions import ResponseError
 
@@ -87,6 +88,7 @@ def _get_key_info(conn, key):
             'idletime': "n/a",
         }
 
+
 VALUE_GETTERS = {
     b'list': lambda conn, key, start=0, end=-1: [(pos + start, val)
                                                  for (pos, val) in enumerate(conn.lrange(key, start, end))],
@@ -115,6 +117,7 @@ def _get_key_details(conn, db, key, page):
         details['data'] = VALUE_GETTERS[details['type']](conn, key)
 
     return details
+
 
 def _raw_get_db_summary(server, db):
     server.connection.execute_command('SELECT', db)
@@ -177,6 +180,7 @@ def _raw_get_db_summary(server, db):
         persistent_memory=persistent_memory,
     )
 
+
 def _get_db_summary(server, db):
     try:
         return _raw_get_db_summary(server, db)
@@ -223,11 +227,20 @@ def inspect(request, server):
     key_details = None
 
     if stats['status'] == 'UP':
+
         if 'key' in request.GET:
             key = request.GET['key']
             db = request.GET.get('db', 0)
-            page = request.GET.get('page', 1)
-            key_details = _get_key_details(conn, db, key, page)
+
+            if request.POST:
+                if request.GET.get('type') == 'string':
+                    conn.set(key, request.POST['value'])
+                else:
+                    raise NotImplementedError(
+                        'Cannot set not-string value in the current version of github.com/dvska/Django-Redisboard')
+            else:
+                page = request.GET.get('page', 1)
+                key_details = _get_key_details(conn, db, key, page)
         else:
             databases = sorted(name[2:] for name in conn.info()
                                if name.startswith('db'))
@@ -251,10 +264,14 @@ def inspect(request, server):
                 else:
                     return HttpResponseNotFound("Unknown database.")
 
-    return render(request, "redisboard/inspect.html", {
-        'databases': database_details,
-        'key_details': key_details,
-        'original': server,
-        'stats': stats,
-        'app_label': 'redisboard',
-    })
+    return (HttpResponse('Ok', content_type='text/plain')
+
+            if request.POST else
+
+            render(request, "redisboard/inspect.html", {
+                'databases': database_details,
+                'key_details': key_details,
+                'original': server,
+                'stats': stats,
+                'app_label': 'redisboard',
+            }))

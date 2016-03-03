@@ -57,7 +57,7 @@ class cached_property(object):
         self.__name__ = fget.__name__
         self.__module__ = fget.__module__
 
-    def __get__(self, obj, type=None):
+    def __get__(self, obj):
         if obj is None:
             return self
         try:

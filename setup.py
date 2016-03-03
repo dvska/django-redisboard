@@ -24,13 +24,13 @@ def read(*names, **kwargs):
 
 setup(
     name='django-redisboard',
-    version='3.0.0',
+    version='3.0.1',
     license='BSD',
-    description='Redis monitoring and inspection drop-in application using django admin.',
+    description='Redis monitoring, inspection and editing drop-in application using django admin.',
     long_description='%s\n%s' % (read('README.rst'), re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))),
     author='Ionel Cristian Mărieș',
     author_email='contact@ionelmc.ro',
-    url='https://github.com/ionelmc/django-redisboard',
+    url='https://github.com/dvska/django-redisboard',
     packages=find_packages('src'),
     package_dir={'': 'src'},
     py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],

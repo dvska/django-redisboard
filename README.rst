@@ -83,6 +83,7 @@ Features
 * Sever statistics in the admin changelist
 * Key summary in the inspect view
 * Value introspection with pagination for lists and sorted sets
+* In-place editing of values
 
 Requirements
 ============
@@ -92,33 +93,13 @@ Requirements
 :Services: Redis 2.2 or later.
 :Packages: Django>=1.8, py-redis>=2.10.0
 
-Don't have a django project ?
-=============================
-
-Use the quick start script ! It will create and run a django project on 0.0.0.0:8000 with just the redisboard installed.
-
-With curl::
-
-    curl -L https://raw.github.com/ionelmc/django-redisboard/master/run_redisboard.py | tee run_redisboard.py | sh -e
-
-With wget::
-
-    wget --no-check-certificate https://raw.github.com/ionelmc/django-redisboard/master/run_redisboard.py -O - | tee run_redisboard.py | sh -e
-
-Don't want to run on 0.0.0.0:8000 ? Run::
-
-    ./run_redisboard.py ip:port
-
 Installation guide
 ==================
 
-Install from pypi, with pip::
+Install from github, with pip::
 
-    pip install django-redisboard
+    pip install -e git+https://github.com/dvska/Django-Redisboard.git#egg=django-redisboard
 
-Or with setuptools::
-
-    easy_install django-redisboard
 
 Add ``redisboard`` to ``INSTALLED_APPS``:
 
@@ -199,6 +180,10 @@ Inspect key details:
 
 .. image:: https://raw.githubusercontent.com/ionelmc/django-redisboard/master/docs/inspect-key.png
 
+Edit key value:
+
+.. image:: https://raw.githubusercontent.com/dvska/django-redisboard/master/docs/edit.png
+
 
 Documentation
 =============
@@ -211,3 +196,4 @@ Development
 To run the all tests run::
 
     tox
+
